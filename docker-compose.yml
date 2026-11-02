@@ -1,0 +1,63 @@
+services:
+  db:
+    image: postgres:16-alpine
+    container_name: water_tank_postgres
+    restart: unless-stopped
+    environment:
+      POSTGRES_DB: ${POSTGRES_DB:-water_tank_db}
+      POSTGRES_USER: ${POSTGRES_USER:-watertank_admin}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-SecureWaterTankPassword2026!}
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    ports:
+      - "5432:5432"
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER:-watertank_admin} -d ${POSTGRES_DB:-water_tank_db}"]
+      interval: 5s
+      timeout: 5s
+      retries: 10
+      start_period: 5s
+    networks:
+      - water_tank_net
+
+  backend:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+    container_name: water_tank_backend
+    restart: unless-stopped
+    environment:
+      DJANGO_SECRET_KEY: ${DJANGO_SECRET_KEY:-dev-secret-key-iot-water-tank-production-grade-2026}
+      DJANGO_DEBUG: ${DJANGO_DEBUG:-True}
+      DJANGO_ALLOWED_HOSTS: ${DJANGO_ALLOWED_HOSTS:-*}
+      DB_ENGINE: django.db.backends.postgresql
+      DB_NAME: ${POSTGRES_DB:-water_tank_db}
+      DB_USER: ${POSTGRES_USER:-watertank_admin}
+      DB_PASSWORD: ${POSTGRES_PASSWORD:-SecureWaterTankPassword2026!}
+      DB_HOST: db
+      DB_PORT: 5432
+    volumes:
+      - ./backend:/app
+    ports:
+      - "${BACKEND_PORT:-8000}:8000"
+    depends_on:
+      db:
+        condition: service_healthy
+    healthcheck:
+      test: ["CMD-SHELL", "curl -f http://localhost:8000/health/ || exit 1"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 15s
+    networks:
+      - water_tank_net
+
+volumes:
+  postgres_data:
+    name: water_tank_postgres_volume
+
+networks:
+  water_tank_net:
+    name: water_tank_network
+    driver: bridge
+
