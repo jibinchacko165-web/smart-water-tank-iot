@@ -1,13 +1,16 @@
-import { getLatestReading } from '../_store.js';
+import { proxyToBackend } from '../_store.js';
 
-export default function handler(req, res) {
+export default async function handler(req, res) {
   res.setHeader('Access-Control-Allow-Origin', '*');
   res.setHeader('Content-Type', 'application/json');
 
-  const latest = getLatestReading();
-  if (!latest) {
-    return res.status(404).json({ message: "No readings recorded yet.", data: null });
+  const liveData = await proxyToBackend('/api/readings/latest/');
+  if (liveData) {
+    return res.status(200).json(liveData);
   }
 
-  return res.status(200).json(latest);
+  return res.status(503).json({
+    message: "Live IoT backend temporarily unreachable. Check Docker and tunnel.",
+    data: null
+  });
 }

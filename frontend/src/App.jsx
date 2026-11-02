@@ -15,13 +15,15 @@ export default function App() {
   const [backendError, setBackendError] = useState(null);
   const [tankHeightCm, setTankHeightCm] = useState(100.0);
 
+  const API_BASE = (import.meta.env.VITE_BACKEND_URL || '').replace(/\/$/, '');
+
   // Fetch all endpoints concurrently
   const fetchData = useCallback(async () => {
     try {
       const [latestRes, statusRes, historyRes] = await Promise.all([
-        fetch('/api/readings/latest/').catch(() => null),
-        fetch('/api/device/status/').catch(() => null),
-        fetch(`/api/readings/history/${selectedHours ? `?hours=${selectedHours}` : ''}`).catch(() => null),
+        fetch(`${API_BASE}/api/readings/latest/`).catch(() => null),
+        fetch(`${API_BASE}/api/device/status/`).catch(() => null),
+        fetch(`${API_BASE}/api/readings/history/${selectedHours ? `?hours=${selectedHours}` : ''}`).catch(() => null),
       ]);
 
       let hasSuccess = false;

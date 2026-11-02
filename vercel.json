@@ -2,18 +2,21 @@
   "buildCommand": "npm run vercel-build",
   "outputDirectory": "frontend/dist",
   "rewrites": [
-    { "source": "/health", "destination": "/api/health" },
-    { "source": "/health/", "destination": "/api/health" },
-    { "source": "/api/readings/latest", "destination": "/api/readings/latest" },
-    { "source": "/api/readings/latest/", "destination": "/api/readings/latest" },
-    { "source": "/api/readings/history", "destination": "/api/readings/history" },
-    { "source": "/api/readings/history/", "destination": "/api/readings/history" },
-    { "source": "/api/device/status", "destination": "/api/device/status" },
-    { "source": "/api/device/status/", "destination": "/api/device/status" },
-    { "source": "/api/device/heartbeat", "destination": "/api/device/heartbeat" },
-    { "source": "/api/device/heartbeat/", "destination": "/api/device/heartbeat" },
-    { "source": "/api/readings", "destination": "/api/readings" },
-    { "source": "/api/readings/", "destination": "/api/readings" },
-    { "source": "/((?!api|assets|favicon|health).*)", "destination": "/index.html" }
+    {
+      "source": "/api/:path*",
+      "destination": "https://vegetarian-star-lips-edited.trycloudflare.com/api/:path*"
+    },
+    {
+      "source": "/health/:path*",
+      "destination": "https://vegetarian-star-lips-edited.trycloudflare.com/health/:path*"
+    },
+    {
+      "source": "/health",
+      "destination": "https://vegetarian-star-lips-edited.trycloudflare.com/health/"
+    },
+    {
+      "source": "/((?!api|assets|favicon|health).*)",
+      "destination": "/index.html"
+    }
   ]
 }
