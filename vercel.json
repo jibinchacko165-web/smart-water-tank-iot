@@ -11,6 +11,10 @@
       "destination": "https://vegetarian-star-lips-edited.trycloudflare.com/health/:path*"
     },
     {
+      "source": "/health/",
+      "destination": "https://vegetarian-star-lips-edited.trycloudflare.com/health/"
+    },
+    {
       "source": "/health",
       "destination": "https://vegetarian-star-lips-edited.trycloudflare.com/health/"
     },
